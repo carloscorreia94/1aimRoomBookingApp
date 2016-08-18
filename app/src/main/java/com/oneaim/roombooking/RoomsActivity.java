@@ -1,5 +1,9 @@
 package com.oneaim.roombooking;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -10,34 +14,44 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ExpandableListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
+import com.oneaim.roombooking.adapters.RoomListAdapter;
 import com.oneaim.roombooking.helper.APIEndpoints;
 import com.oneaim.roombooking.helper.JSONRequestListener;
+import com.oneaim.roombooking.helper.MainController;
 import com.oneaim.roombooking.helper.NetworkHelper;
 import com.oneaim.roombooking.helper.RequestValues;
+import com.oneaim.roombooking.helper.RoomReadyListener;
 import com.oneaim.roombooking.models.Room;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RoomsActivity extends AppCompatActivity implements JSONRequestListener {
+public class RoomsActivity extends AppCompatActivity implements JSONRequestListener, RoomReadyListener {
     public static final String TAG = RoomsActivity.class.getSimpleName();
 
     private Map<String, String> mapRequest;
     private NetworkHelper networkHelper;
-    private List<Room> rooms;
+    private List<Room> rooms = new ArrayList<>();
+    private RoomListAdapter adapter;
 
     //UI Components
     private ExpandableListView vListView;
-    private View mLoadingView;
+    private ProgressBar vLoadingBar;
     private View mHeaderView;
+
+    public List<Room> getRooms() {
+        return rooms;
+    }
 
     public JSONObject getRequestBody() {
         return new JSONObject(mapRequest);
@@ -47,6 +61,9 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
         Log.i(TAG,response);
         try {
             rooms = Room.getRooms(response);
+            adapter.notifyDataSetChanged();
+            showProgress(false);
+
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(getApplicationContext(),
@@ -62,6 +79,7 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MainController.initImageLoader(getApplicationContext());
 
         networkHelper = new NetworkHelper(APIEndpoints.GET_ROOMS,Request.Method.POST);
         networkHelper.setListener(this);
@@ -72,6 +90,14 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
         networkHelper.process();
 
         setContentView(R.layout.activity_rooms);
+        vListView = (ExpandableListView) findViewById(R.id.expandableListView);
+        vLoadingBar = (ProgressBar) findViewById(R.id.loading_progress);
+
+        adapter = new RoomListAdapter(getApplicationContext(),this);
+        vListView.setAdapter(adapter);
+
+        showProgress(true);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -105,5 +131,28 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void showProgress(final boolean show) {
+
+        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+        vListView.setVisibility(show ? View.GONE : View.VISIBLE);
+        vListView.animate().setDuration(shortAnimTime).alpha(
+                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                vListView.setVisibility(show ? View.GONE : View.VISIBLE);
+            }
+        });
+
+        vLoadingBar.setVisibility(show ? View.VISIBLE : View.GONE);
+        vLoadingBar.animate().setDuration(shortAnimTime).alpha(
+                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                vLoadingBar.setVisibility(show ? View.VISIBLE : View.GONE);
+            }
+        });
     }
 }

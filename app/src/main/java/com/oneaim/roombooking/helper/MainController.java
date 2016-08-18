@@ -1,11 +1,15 @@
 package com.oneaim.roombooking.helper;
 
 import android.app.Application;
+import android.content.Context;
 import android.text.TextUtils;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 
 /**
  * Created by carloscorreia on 16/08/16.
@@ -46,4 +50,20 @@ public class MainController extends Application {
         }
     }
 
+    public static void initImageLoader(Context context) {
+        // This configuration tuning is custom. You can tune every option, you may tune some of them,
+        // or you can create default configuration by
+        //  ImageLoaderConfiguration.createDefault(this);
+        // method.
+        ImageLoaderConfiguration.Builder config = new ImageLoaderConfiguration.Builder(context);
+        config.threadPriority(Thread.NORM_PRIORITY - 2);
+        config.denyCacheImageMultipleSizesInMemory();
+        config.diskCacheFileNameGenerator(new Md5FileNameGenerator());
+        config.diskCacheSize(50 * 1024 * 1024); // 50 MiB
+        config.tasksProcessingOrder(QueueProcessingType.LIFO);
+        config.writeDebugLogs(); // Remove for release app
+
+        // Initialize ImageLoader with configuration.
+        com.nostra13.universalimageloader.core.ImageLoader.getInstance().init(config.build());
+    }
 }

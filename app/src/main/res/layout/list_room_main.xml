@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="10dp">
+    <ImageView
+        android:id="@+id/roomMainPicture"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:adjustViewBounds="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <TextView
+        android:id="@+id/roomNameValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="19sp"
+        android:text="Room Name"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
+    <TextView
+        android:id="@+id/roomNameKey"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="19sp"
+        android:text="@string/layout_room_name"
+        android:layout_toLeftOf="@id/roomNameValue"
+        android:layout_toStartOf="@id/roomNameValue"
+        android:layout_marginRight="3dp"
+        android:layout_marginEnd="3dp"/>
+    <TextView
+        android:id="@+id/roomLocationValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="17sp"
+        android:textStyle="italic"
+        android:text="Room Location"
+        android:layout_below="@id/roomNameValue"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        />
+    <TextView
+        android:id="@+id/roomLocationKey"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="19sp"
+        android:text="@string/layout_room_location"
+        android:layout_toLeftOf="@id/roomLocationValue"
+        android:layout_toStartOf="@id/roomLocationValue"
+        android:layout_below="@id/roomNameKey"
+        android:layout_marginRight="3dp"
+        android:layout_marginEnd="3dp"/>
+    <TextView
+        android:id="@+id/roomSizeValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:text="x m^2"
+        android:layout_below="@id/roomLocationValue"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
+
+    <TextView
+        android:id="@+id/roomSizeKey"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="17sp"
+        android:text="@string/layout_room_size"
+        android:layout_toLeftOf="@id/roomSizeValue"
+        android:layout_toStartOf="@id/roomSizeValue"
+        android:layout_below="@id/roomLocationKey"
+        android:layout_marginRight="3dp"
+        android:layout_marginEnd="3dp"/>
+
+    <TextView
+        android:id="@+id/roomCapacityKey"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="17sp"
+        android:text="@string/layout_room_capacity"
+        android:layout_toRightOf="@id/roomMainPicture"
+        android:layout_toEndOf="@id/roomMainPicture"
+        android:layout_below="@id/roomLocationKey"
+        android:layout_marginStart="3dp"
+        android:layout_marginLeft="3dp"
+        android:layout_alignTop="@id/roomSizeKey"/>
+
+    <TextView
+        android:id="@+id/capacityValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:text="000"
+        android:layout_toRightOf="@id/roomCapacityKey"
+        android:layout_toEndOf="@id/roomCapacityKey"
+        android:layout_alignTop="@id/roomCapacityKey"
+        android:layout_marginLeft="3dp"
+        android:layout_marginStart="3dp" />
+
+</RelativeLayout>
