@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="layout_room_name">Name:</string>
-    <string name="layout_room_location">Location:</string>
-    <string name="layout_room_size">Size:</string>
-    <string name="layout_room_capacity">Capacity:</string>
+    <string name="rooms_main_list_name">Name:</string>
+    <string name="rooms_main_list_location">Location:</string>
+    <string name="rooms_main_list_size">Size:</string>
+    <string name="rooms_main_list_capacity">Capacity:</string>
+    <string name="rooms_detail_list_availability_key">Availaiblity:</string>
+    <string name="rooms_detail_list_equipment_key">Equipment:</string>
+    <string name="rooms_detail_list_pictures_key">Pictures:</string>
 </resources>

@@ -10,7 +10,7 @@
         android:textStyle="bold"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:text="Equipment:"/>
+        android:text="@string/rooms_detail_list_equipment_key"/>
 
     <TextView
         android:id="@+id/equipmentListValue"
@@ -19,8 +19,7 @@
         android:textSize="19sp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@id/equipmentListKey"
-        android:text="yeaaa"/>
+        android:layout_below="@id/equipmentListKey" />
 
     <TextView
         android:id="@+id/availabilityListKey"
@@ -30,7 +29,7 @@
         android:textStyle="bold"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:text="Availability:"/>
+        android:text="@string/rooms_detail_list_availability_key"/>
 
     <TextView
         android:id="@+id/availabilityListValue"
@@ -39,6 +38,22 @@
         android:textSize="19sp"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_below="@id/availabilityListKey"
-        android:text="yeaaa"/>
+        android:layout_below="@id/availabilityListKey" />
+
+    <LinearLayout
+        android:id="@+id/pictureLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@id/availabilityListValue">
+        <TextView
+            android:layout_marginTop="12dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="19sp"
+            android:textStyle="bold"
+            android:layout_gravity="end"
+            android:text="@string/rooms_detail_list_pictures_key"/>
+    </LinearLayout>
+
 </RelativeLayout>

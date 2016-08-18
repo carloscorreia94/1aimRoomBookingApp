@@ -8,12 +8,14 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.oneaim.roombooking.R;
@@ -33,7 +35,7 @@ public class RoomListAdapter extends BaseExpandableListAdapter {
     private Context context;
     private RoomReadyListener listener;
     private LayoutInflater inflater;
-    private DisplayImageOptions options;
+    private DisplayImageOptions options, optionsSingle;
     private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
 
     public RoomListAdapter(Context context,RoomReadyListener listener) {
@@ -48,6 +50,15 @@ public class RoomListAdapter extends BaseExpandableListAdapter {
                 .cacheOnDisk(true)
                 .considerExifParams(true)
                 .displayer(new RoundedBitmapDisplayer(80)).build();
+
+        optionsSingle = new DisplayImageOptions.Builder()
+                .showImageOnLoading(R.drawable.loading)
+                .showImageForEmptyUri(R.drawable.room_default)
+                .showImageOnFail(R.drawable.error_thumb)
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .considerExifParams(true)
+                .displayer(new FadeInBitmapDisplayer(1000)).build();
     }
 
 
@@ -132,7 +143,7 @@ public class RoomListAdapter extends BaseExpandableListAdapter {
 
             holder.availabilityValue = (TextView) convertView.findViewById(R.id.availabilityListValue);
             holder.equipmentValue = (TextView) convertView.findViewById(R.id.equipmentListValue);
-
+            holder.pictureLayout = (LinearLayout) convertView.findViewById(R.id.pictureLayout);
             convertView.setTag(holder);
 
         } else {
@@ -150,7 +161,21 @@ public class RoomListAdapter extends BaseExpandableListAdapter {
         for(String singleAv : r.availability) {
             availability += singleAv + "\n";
         }
+
+        for(String singlePic : r.images) {
+            ImageView image = new ImageView(context);
+            image.setLayoutParams(new android.view.ViewGroup.LayoutParams(80,60));
+            image.setMaxHeight(20);
+            image.setMaxWidth(20);
+
+            holder.pictureLayout.addView(image);
+            ImageLoader.getInstance()
+                    .displayImage(APIEndpoints.API_URL + singlePic, image, optionsSingle, animateFirstListener);
+        }
+
         holder.availabilityValue.setText(availability);
+
+
 
         return convertView;
     }
@@ -168,5 +193,6 @@ public class RoomListAdapter extends BaseExpandableListAdapter {
     static class RoomDetailsHolder {
         TextView equipmentValue;
         TextView availabilityValue;
+        LinearLayout pictureLayout;
     }
 }
