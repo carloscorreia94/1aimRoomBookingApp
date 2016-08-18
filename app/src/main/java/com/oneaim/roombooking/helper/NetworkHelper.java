@@ -53,7 +53,7 @@ public class NetworkHelper {
      *
      * This is the only type of request processing we're going to use throughout the app.
      */
-    public void processJSON() {
+    private void processJSON() {
         final String TAG = type + ":" + url.replace(APIEndpoints.API_URL, "");
 
         Response.Listener<String> successListener = new Response.Listener<String>() {

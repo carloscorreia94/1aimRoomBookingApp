@@ -14,7 +14,9 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.NetworkResponse;
@@ -28,12 +30,19 @@ import com.oneaim.roombooking.helper.RequestValues;
 import com.oneaim.roombooking.helper.RoomReadyListener;
 import com.oneaim.roombooking.models.Room;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class RoomsActivity extends AppCompatActivity implements JSONRequestListener, RoomReadyListener {
@@ -43,11 +52,13 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
     private NetworkHelper networkHelper;
     private List<Room> rooms = new ArrayList<>();
     private RoomListAdapter adapter;
+    private DateTime currentDate;
 
     //UI Components
     private ExpandableListView vListView;
     private ProgressBar vLoadingBar;
-    private View mHeaderView;
+    private TextView tCurrentDate;
+    private FloatingActionButton btnRoomDetails;
 
     public List<Room> getRooms() {
         return rooms;
@@ -72,6 +83,7 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
     }
 
     public void errorResponse() {
+        showProgress(false);
         Toast.makeText(getApplicationContext(),
                 R.string.error_network_unknown, Toast.LENGTH_LONG).show();
     }
@@ -84,6 +96,7 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
         networkHelper = new NetworkHelper(APIEndpoints.GET_ROOMS,Request.Method.POST);
         networkHelper.setListener(this);
 
+
         mapRequest = new HashMap<>();
         mapRequest.put(RequestValues.ROOMS_DATE_KEY, RequestValues.ROOMS_DATE_TODAY_VALUE);
 
@@ -92,23 +105,46 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
         setContentView(R.layout.activity_rooms);
         vListView = (ExpandableListView) findViewById(R.id.expandableListView);
         vLoadingBar = (ProgressBar) findViewById(R.id.loading_progress);
+        btnRoomDetails = (FloatingActionButton) findViewById(R.id.fab);
+
+        configureHeader();
 
         adapter = new RoomListAdapter(getApplicationContext(),this);
         vListView.setAdapter(adapter);
+
+        vListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                if (adapter == null) {return;}
+                for (int i = 0; i < adapter.getGroupCount(); i++) {
+                    if (i != groupPosition) {
+                        vListView.collapseGroup(i);
+                    }
+                }
+                btnRoomDetails.setVisibility(View.VISIBLE);
+            }
+        });
+
+        vListView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
+            @Override
+            public void onGroupCollapse(int i) {
+                btnRoomDetails.setVisibility(View.GONE);
+            }
+        });
 
         showProgress(true);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+
+       /* fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
-        });
+        }); */
     }
 
     @Override
@@ -154,5 +190,47 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
                 vLoadingBar.setVisibility(show ? View.VISIBLE : View.GONE);
             }
         });
+    }
+
+
+    public void configureHeader() {
+        ImageView prevDay = (ImageView) findViewById(R.id.prevDayImageBtn);
+        ImageView nextDay = (ImageView) findViewById(R.id.nextDayImageBtn);
+        tCurrentDate = (TextView) findViewById(R.id.currentDate);
+
+        currentDate = new DateTime();
+        DateTimeFormatter fmt = DateTimeFormat.forPattern("dd-MM-yyyy");
+        fmt = fmt.withLocale(Locale.GERMANY);
+
+        tCurrentDate.setText(fmt.print(currentDate));
+
+        prevDay.setOnClickListener(new TimeClickListener(DayType.Previous));
+        nextDay.setOnClickListener(new TimeClickListener(DayType.Next));
+    }
+
+    public enum DayType {
+        Previous,Next
+    }
+
+    class TimeClickListener implements View.OnClickListener {
+        DayType type;
+
+        public TimeClickListener(DayType type) {
+            this.type = type;
+        }
+
+        @Override
+        public void onClick(View view) {
+            currentDate = type.equals(DayType.Previous) ? currentDate.minusDays(1) : currentDate.plusDays(1);
+            DateTimeFormatter fmt = DateTimeFormat.forPattern("dd-MM-yyyy");
+            fmt = fmt.withLocale(Locale.GERMANY);
+
+            tCurrentDate.setText(fmt.print(currentDate));
+
+            final long unixStamp = currentDate.getMillis() / 1000;
+            mapRequest = new HashMap<>();
+            mapRequest.put(RequestValues.ROOMS_DATE_KEY, String.valueOf(unixStamp));
+            networkHelper.process();
+        }
     }
 }
