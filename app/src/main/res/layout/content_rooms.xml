@@ -9,6 +9,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@color/background_list_main"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.oneaim.roombooking.RoomsActivity"
     tools:showIn="@layout/activity_rooms">
@@ -25,6 +26,7 @@
             android:textStyle="bold"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
+            android:textColor="@color/colorDate"
             android:text="DD-MM-YYYY"/>
         <ImageView
             android:id="@+id/prevDayImageBtn"

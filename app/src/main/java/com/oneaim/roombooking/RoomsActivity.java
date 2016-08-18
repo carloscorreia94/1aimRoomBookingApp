@@ -2,11 +2,9 @@ package com.oneaim.roombooking;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
-import android.os.Build;
+
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -19,7 +17,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.oneaim.roombooking.adapters.RoomListAdapter;
 import com.oneaim.roombooking.helper.APIEndpoints;
@@ -31,15 +28,12 @@ import com.oneaim.roombooking.helper.RoomReadyListener;
 import com.oneaim.roombooking.models.Room;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -73,6 +67,7 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
         try {
             rooms = Room.getRooms(response);
             adapter.notifyDataSetChanged();
+            vListView.setSelectionFromTop(0,0);
             showProgress(false);
 
         } catch (JSONException e) {
@@ -132,14 +127,6 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
-       /* fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        }); */
     }
 
     @Override
