@@ -115,12 +115,7 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
         vListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             @Override
             public void onGroupExpand(int groupPosition) {
-                if (adapter == null) {return;}
-                for (int i = 0; i < adapter.getGroupCount(); i++) {
-                    if (i != groupPosition) {
-                        vListView.collapseGroup(i);
-                    }
-                }
+                collapseAllGroups(groupPosition);
                 btnRoomDetails.setVisibility(View.VISIBLE);
             }
         });
@@ -192,6 +187,15 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
         });
     }
 
+    public void collapseAllGroups(int groupPosition) {
+        if (adapter == null) {return;}
+        for (int i = 0; i < adapter.getGroupCount(); i++) {
+            if (groupPosition==-1 || i != groupPosition) {
+                vListView.collapseGroup(i);
+            }
+        }
+    }
+
 
     public void configureHeader() {
         ImageView prevDay = (ImageView) findViewById(R.id.prevDayImageBtn);
@@ -230,6 +234,11 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
             final long unixStamp = currentDate.getMillis() / 1000;
             mapRequest = new HashMap<>();
             mapRequest.put(RequestValues.ROOMS_DATE_KEY, String.valueOf(unixStamp));
+
+            //This solution is really stupid, though it's a last minute resource
+            collapseAllGroups(-1);
+
+            btnRoomDetails.setVisibility(View.GONE);
             networkHelper.process();
         }
     }

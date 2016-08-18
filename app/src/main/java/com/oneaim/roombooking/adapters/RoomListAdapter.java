@@ -58,7 +58,7 @@ public class RoomListAdapter extends BaseExpandableListAdapter {
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
                 .considerExifParams(true)
-                .displayer(new FadeInBitmapDisplayer(1000)).build();
+                .displayer(new FadeInBitmapDisplayer(1500)).build();
     }
 
 
@@ -111,7 +111,7 @@ public class RoomListAdapter extends BaseExpandableListAdapter {
             holder.name = (TextView) convertView.findViewById(R.id.roomNameValue);
             holder.location = (TextView) convertView.findViewById(R.id.roomLocationValue);
             holder.size = (TextView) convertView.findViewById(R.id.roomSizeValue);
-           // holder.capacity = (TextView) convertView.findViewById(R.id.capacityValue);
+            holder.capacity = (TextView) convertView.findViewById(R.id.roomCapacValue);
 
             convertView.setTag(holder);
 
@@ -128,7 +128,7 @@ public class RoomListAdapter extends BaseExpandableListAdapter {
         holder.name.setText(r.name);
         holder.location.setText(r.location);
         holder.size.setText(r.size);
-       // holder.capacity.setText(r.capacity);
+        holder.capacity.setText(String.valueOf(r.capacity));
 
         return convertView;
     }
@@ -162,12 +162,12 @@ public class RoomListAdapter extends BaseExpandableListAdapter {
             availability += singleAv + "\n";
         }
 
+        holder.pictureLayout.removeAllViews();
         for(String singlePic : r.images) {
             ImageView image = new ImageView(context);
-            image.setLayoutParams(new android.view.ViewGroup.LayoutParams(80,60));
-            image.setMaxHeight(20);
-            image.setMaxWidth(20);
-
+            image.setLayoutParams(new android.view.ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            image.setMaxHeight(100);
+            image.setPadding(15,15,15,15);
             holder.pictureLayout.addView(image);
             ImageLoader.getInstance()
                     .displayImage(APIEndpoints.API_URL + singlePic, image, optionsSingle, animateFirstListener);
