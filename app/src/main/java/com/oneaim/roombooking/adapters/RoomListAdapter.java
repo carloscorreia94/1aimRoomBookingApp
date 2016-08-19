@@ -1,29 +1,23 @@
 package com.oneaim.roombooking.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.oneaim.roombooking.R;
-import com.oneaim.roombooking.RoomsActivity;
 import com.oneaim.roombooking.helper.APIEndpoints;
 import com.oneaim.roombooking.helper.AnimateFirstDisplayListener;
 import com.oneaim.roombooking.helper.RoomReadyListener;
 import com.oneaim.roombooking.models.Room;
+import com.oneaim.roombooking.views.NonScrollableGridView;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -35,7 +29,7 @@ public class RoomListAdapter extends BaseExpandableListAdapter {
     private Context context;
     private RoomReadyListener listener;
     private LayoutInflater inflater;
-    private DisplayImageOptions options, optionsSingle;
+    private DisplayImageOptions options;
     private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
 
     public RoomListAdapter(Context context,RoomReadyListener listener) {
@@ -50,15 +44,6 @@ public class RoomListAdapter extends BaseExpandableListAdapter {
                 .cacheOnDisk(true)
                 .considerExifParams(true)
                 .displayer(new RoundedBitmapDisplayer(80)).build();
-
-        optionsSingle = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.loading)
-                .showImageForEmptyUri(R.drawable.room_default)
-                .showImageOnFail(R.drawable.error_thumb)
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .considerExifParams(true)
-                .displayer(new FadeInBitmapDisplayer(1500)).build();
     }
 
 
@@ -141,9 +126,9 @@ public class RoomListAdapter extends BaseExpandableListAdapter {
             convertView = inflater.inflate(R.layout.list_room_details, viewGroup,false);
             holder = new RoomDetailsHolder();
 
+            holder.gridView = (NonScrollableGridView) convertView.findViewById(R.id.gridView);
             holder.availabilityValue = (TextView) convertView.findViewById(R.id.availabilityListValue);
             holder.equipmentValue = (TextView) convertView.findViewById(R.id.equipmentListValue);
-            holder.pictureLayout = (LinearLayout) convertView.findViewById(R.id.pictureLayout);
             convertView.setTag(holder);
 
         } else {
@@ -151,6 +136,8 @@ public class RoomListAdapter extends BaseExpandableListAdapter {
         }
 
         Room r = (Room) getGroup(i);
+        holder.gridView.setAdapter(new GridViewAdapter(context,r.images));
+
         String equipment = "";
         for(String singleEq : r.equipment) {
             equipment += StringUtils.abbreviate(singleEq,12) + "\n";
@@ -162,20 +149,7 @@ public class RoomListAdapter extends BaseExpandableListAdapter {
             availability += singleAv + "\n";
         }
 
-        holder.pictureLayout.removeAllViews();
-        for(String singlePic : r.images) {
-            ImageView image = new ImageView(context);
-            image.setLayoutParams(new android.view.ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            image.setMaxHeight(100);
-            image.setPadding(15,15,15,15);
-            holder.pictureLayout.addView(image);
-            ImageLoader.getInstance()
-                    .displayImage(APIEndpoints.API_URL + singlePic, image, optionsSingle, animateFirstListener);
-        }
-
         holder.availabilityValue.setText(availability);
-
-
 
         return convertView;
     }
@@ -193,6 +167,6 @@ public class RoomListAdapter extends BaseExpandableListAdapter {
     static class RoomDetailsHolder {
         TextView equipmentValue;
         TextView availabilityValue;
-        LinearLayout pictureLayout;
+        NonScrollableGridView gridView;
     }
 }

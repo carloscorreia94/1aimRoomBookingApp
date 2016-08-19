@@ -226,6 +226,7 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
             collapseAllGroups(-1);
 
             btnRoomDetails.setVisibility(View.GONE);
+            showProgress(true);
             networkHelper.process();
         }
     }

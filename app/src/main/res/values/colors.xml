@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#362A83</color> //title
+    <color name="colorPrimary">#009547</color> //title
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#362A83</color> //button
-    <color name="colorDate">#009547</color> //date
-    <color name="background_list_main">#b7b2b2</color> //main background
+    <color name="colorAccent">#009547</color> //button
+    <color name="colorDate">#9ABD36</color> //date
+    <color name="background_list_main">#f2eded</color> //main background
+    <color name="background_head_rooms">#bfbbbb</color> //main background
     <color name="background_list_detail">#e1dddd</color> //detail background
     <color name="text_list_detail">#000</color>
-    <color name="text_list_values">#009547</color>
+    <color name="text_list_values">#9ABD36</color>
 </resources>
