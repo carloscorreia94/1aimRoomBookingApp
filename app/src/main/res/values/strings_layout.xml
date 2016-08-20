@@ -7,4 +7,7 @@
     <string name="rooms_detail_list_availability_key">Availaiblity:</string>
     <string name="rooms_detail_list_equipment_key">Equipment:</string>
     <string name="rooms_detail_list_pictures_key">Pictures:</string>
+    <!-- Strings for Input -->
+    <string name="sendpass_base_event_name_hint">Event name:</string>
+    <string name="sendpass_base_event_description_hint">Event description:</string>
 </resources>

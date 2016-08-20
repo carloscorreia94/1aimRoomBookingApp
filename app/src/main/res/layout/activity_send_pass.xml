@@ -16,6 +16,16 @@
             android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:text="@string/toolbar_title_sendpass"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#fff"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
             <ImageView
                 android:id="@+id/btn_img_go_back"
                 android:layout_alignParentLeft="true"
@@ -46,12 +56,45 @@
                 android:visibility="gone"/>
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp">
+        <ImageView
+            android:id="@+id/room_main_picture"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:adjustViewBounds="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"/>
+        <TextView
+            android:id="@+id/room_number_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            android:text="Room #2.5"
+            android:textColor="@color/text_list_detail"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"/>
+        <TextView
+            android:id="@+id/room_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="22sp"
+            android:text="DD-MM-YYYY"
+            android:textStyle="italic"
+            android:textColor="@color/text_list_values"
+            android:layout_below="@id/room_number_desc"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"/>
+    </RelativeLayout>
     <include layout="@layout/activity_send_pass_base"
-        android:layout_width="match_parent" android:layout_height="match_parent" />
+        android:layout_width="match_parent" android:layout_height="fill_parent" />
     <include layout="@layout/activity_send_pass_passes"
-        android:layout_width="match_parent" android:layout_height="match_parent" />
+        android:layout_width="match_parent" android:layout_height="fill_parent" />
     <include  layout="@layout/activity_send_pass_confirm"
-        android:layout_width="match_parent" android:layout_height="match_parent" />
+        android:layout_width="match_parent" android:layout_height="fill_parent" />
 </LinearLayout>
 
 

@@ -17,6 +17,7 @@ public class Room {
     public String name,location,size;
     public int capacity;
     public String[] equipment,availability,images;
+    private static Room currentRoom = null;
 
     public Room(String name, String location, String size, int capacity,
                 String[] equipment, String[] availability, String[] images) {
@@ -28,6 +29,14 @@ public class Room {
         this.availability = availability;
         this.images = images;
 
+    }
+
+    public static Room getCurrentRoom() {
+        return currentRoom;
+    }
+
+    public static void setCurrentRoom(Room room) {
+        currentRoom = room;
     }
 
     public static List<Room> getRooms(String rooms) throws JSONException {

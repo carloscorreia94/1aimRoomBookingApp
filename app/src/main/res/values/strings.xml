@@ -4,4 +4,8 @@
     <string name="error_network_unknown">Network error. Check your connection/Server State</string>
     <string name="error_parsing_data">Error parsing server data. Contact Administrator</string>
     <string name="send_pass_desc">Send Pass to #%1$s</string>
+    <string name="send_pass_room_desc">Room #%1$s</string>
+    <string name="toolbar_title_sendpass">Send Pass Info</string>
+    <string name="toolbar_title_passes">Passes to Send</string>
+    <string name="toolbar_title_confirmation">Confirmation</string>
 </resources>

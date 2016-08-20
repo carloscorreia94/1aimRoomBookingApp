@@ -47,6 +47,7 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
     private List<Room> rooms = new ArrayList<>();
     private RoomListAdapter adapter;
     private DateTime currentDate;
+    private DateTimeFormatter fmt;
 
     //UI Components
     private RelativeLayout sendPassClickSection;
@@ -147,8 +148,9 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
     }
 
     public void openSendPass(int roomNumber) {
+        Room.setCurrentRoom(rooms.get(roomNumber));
         Intent intent = new Intent(RoomsActivity.this,SendPassActivity.class);
-        intent.putExtra("room",roomNumber);
+        intent.putExtra("chosen_date",fmt.print(currentDate));
         startActivity(intent);
     }
 
@@ -191,8 +193,8 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
         tCurrentDate = (TextView) findViewById(R.id.currentDate);
 
         currentDate = new DateTime();
-        DateTimeFormatter fmt = DateTimeFormat.forPattern("dd-MM-yyyy");
-        fmt = fmt.withLocale(Locale.GERMANY);
+        fmt = DateTimeFormat.forPattern("dd-MM-yyyy")
+                .withLocale(Locale.GERMANY);
 
         tCurrentDate.setText(fmt.print(currentDate));
 

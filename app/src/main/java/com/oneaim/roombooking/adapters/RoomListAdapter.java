@@ -16,6 +16,7 @@ import com.oneaim.roombooking.R;
 import com.oneaim.roombooking.helper.APIEndpoints;
 import com.oneaim.roombooking.helper.AnimateFirstDisplayListener;
 import com.oneaim.roombooking.helper.RoomReadyListener;
+import com.oneaim.roombooking.helper.UIHelpers;
 import com.oneaim.roombooking.models.Room;
 import com.oneaim.roombooking.views.NonScrollableGridView;
 
@@ -29,21 +30,12 @@ public class RoomListAdapter extends BaseExpandableListAdapter {
     private Context context;
     private RoomReadyListener listener;
     private LayoutInflater inflater;
-    private DisplayImageOptions options;
-    private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
 
     public RoomListAdapter(Context context,RoomReadyListener listener) {
         this.context = context;
         this.inflater = LayoutInflater.from(context);
         this.listener = listener;
-        options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.loading)
-                .showImageForEmptyUri(R.drawable.room_default)
-                .showImageOnFail(R.drawable.error_thumb)
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .considerExifParams(true)
-                .displayer(new RoundedBitmapDisplayer(80)).build();
+
     }
 
 
@@ -108,7 +100,7 @@ public class RoomListAdapter extends BaseExpandableListAdapter {
         Room r = (Room) getGroup(i);
 
         ImageLoader.getInstance()
-                .displayImage(APIEndpoints.API_URL + r.images[0], holder.mainPicture, options, animateFirstListener);
+                .displayImage(APIEndpoints.API_URL + r.images[0], holder.mainPicture, UIHelpers.Constants.optionsMainRoom, UIHelpers.Constants.animateFirstListener);
 
         holder.name.setText(r.name);
         holder.location.setText(r.location);

@@ -2,12 +2,28 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/view_send_pass_base"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <TextView
-        android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:paddingRight="20dp"
+    android:paddingLeft="20dp">
+    <EditText android:id="@+id/event_name" android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="BASE"
-        android:textStyle="bold"
-        android:textSize="30dp"
-        android:layout_gravity="center_horizontal"/>
+        android:hint="@string/sendpass_base_event_name_hint"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textColorHint="@color/text_list_values"
+        android:textColor="@color/text_list_detail"
+        android:textSize="16sp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="10dp" />
+    <EditText android:id="@+id/event_description" android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/sendpass_base_event_description_hint"
+        android:lines="4"
+        android:maxLines="3"
+        android:singleLine="false"
+        android:textColorHint="@color/text_list_values"
+        android:textColor="@color/text_list_detail"
+        android:textSize="16sp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="10dp" />
 </LinearLayout>
