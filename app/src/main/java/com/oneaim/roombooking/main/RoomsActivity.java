@@ -1,17 +1,14 @@
-package com.oneaim.roombooking;
+package com.oneaim.roombooking.main;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -20,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
+import com.oneaim.roombooking.R;
 import com.oneaim.roombooking.adapters.RoomListAdapter;
 import com.oneaim.roombooking.helper.APIEndpoints;
 import com.oneaim.roombooking.helper.JSONRequestListener;

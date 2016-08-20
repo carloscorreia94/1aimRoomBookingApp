@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/background_list_main"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.oneaim.roombooking.RoomsActivity"
+    tools:context=".main.RoomsActivity"
     tools:showIn="@layout/activity_rooms">
 
     <RelativeLayout
