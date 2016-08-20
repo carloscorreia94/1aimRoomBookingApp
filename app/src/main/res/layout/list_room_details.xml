@@ -4,6 +4,7 @@
     android:background="@color/background_list_detail"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants"
     android:padding="15dp">
     <RelativeLayout
         android:layout_width="match_parent" android:layout_height="wrap_content">

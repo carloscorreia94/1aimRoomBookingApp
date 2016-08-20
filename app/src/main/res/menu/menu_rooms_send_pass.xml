@@ -4,7 +4,8 @@
     tools:context="com.oneaim.roombooking.RoomsActivity">
     <item
         android:id="@+id/action_settings"
-        android:orderInCategory="100"
+        android:orderInCategory="0"
         android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:icon="@drawable/arrow_left"
+        app:showAsAction="always" />
 </menu>

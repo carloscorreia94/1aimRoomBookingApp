@@ -3,6 +3,7 @@ package com.oneaim.roombooking;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,7 @@ import android.view.MenuItem;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,10 +51,11 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
     private DateTime currentDate;
 
     //UI Components
+    private RelativeLayout sendPassClickSection;
+    private TextView sendPassDesc;
     private ExpandableListView vListView;
     private ProgressBar vLoadingBar;
     private TextView tCurrentDate;
-    private FloatingActionButton btnRoomDetails;
 
     public List<Room> getRooms() {
         return rooms;
@@ -100,7 +103,8 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
         setContentView(R.layout.activity_rooms);
         vListView = (ExpandableListView) findViewById(R.id.expandableListView);
         vLoadingBar = (ProgressBar) findViewById(R.id.loading_progress);
-        btnRoomDetails = (FloatingActionButton) findViewById(R.id.fab);
+        sendPassClickSection = (RelativeLayout) findViewById(R.id.sendPassClickSection);
+        sendPassDesc = (TextView) findViewById(R.id.sendPassDesc);
 
         configureHeader();
 
@@ -109,16 +113,31 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
 
         vListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             @Override
-            public void onGroupExpand(int groupPosition) {
+            public void onGroupExpand(final int groupPosition) {
                 collapseAllGroups(groupPosition);
-                btnRoomDetails.setVisibility(View.VISIBLE);
+                sendPassDesc.setText(String.format(getString(R.string.send_pass_desc), rooms.get(groupPosition).name));
+                sendPassClickSection.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        openSendPass(groupPosition);
+                    }
+                });
+                sendPassClickSection.setVisibility(View.VISIBLE);
             }
         });
 
         vListView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
             @Override
             public void onGroupCollapse(int i) {
-                btnRoomDetails.setVisibility(View.GONE);
+                sendPassClickSection.setVisibility(View.GONE);
+            }
+        });
+
+        vListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView expandableListView, View view, int i, int i1, long l) {
+                openSendPass(i);
+                return true;
             }
         });
 
@@ -129,26 +148,10 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_rooms, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    public void openSendPass(int roomNumber) {
+        Intent intent = new Intent(RoomsActivity.this,SendPassActivity.class);
+        intent.putExtra("room",roomNumber);
+        startActivity(intent);
     }
 
     public void showProgress(final boolean show) {
@@ -225,7 +228,7 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
             //This solution is really stupid, though it's a last minute resource
             collapseAllGroups(-1);
 
-            btnRoomDetails.setVisibility(View.GONE);
+            sendPassClickSection.setVisibility(View.GONE);
             showProgress(true);
             networkHelper.process();
         }
