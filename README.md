@@ -1,5 +1,18 @@
 # RoomBooking App 
 
+Implementation done according to [these guidelines](https://challenges.1aim.com/roombooking_app/).
+
+## Disclaimer
+
+* I've not implemented tests as I've said (by email) to implement the rest of the app on saturday evening (21/08/16), and spent all night working  on cool features and UI. It was not specified on the challenge description, so I didn't apply special concern on it. Nevertheless it's my policy to create tests for software whenever I have the chance.
+
+## To Test the app
+Download apk [here!](test)
+
+* Go to Phone Settings -> Security -> Enable Apps from Unknown Sources
+* You're all set :-)
+
+
 ## Not Implemented
 
 * Passes Check for duplicates and real phone numbers (only accepting numbers with more than 8 chars)
@@ -20,3 +33,7 @@
 * Universal Image Loader
 * Apache Commons Lang
 * JODA Time Library
+
+## Documentation
+
+You can find useful documentaion on the main classes and activities of the project.
