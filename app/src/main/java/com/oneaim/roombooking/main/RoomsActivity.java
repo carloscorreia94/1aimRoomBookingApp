@@ -7,8 +7,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -25,6 +28,7 @@ import com.oneaim.roombooking.helper.MainController;
 import com.oneaim.roombooking.helper.NetworkHelper;
 import com.oneaim.roombooking.helper.RequestValues;
 import com.oneaim.roombooking.helper.RoomReadyListener;
+import com.oneaim.roombooking.helper.UIHelpers;
 import com.oneaim.roombooking.models.Room;
 
 import org.joda.time.DateTime;
@@ -44,10 +48,11 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
 
     private Map<String, String> mapRequest;
     private NetworkHelper networkHelper;
-    private List<Room> rooms = new ArrayList<>();
+    private List<Room> roomsFiltered, rooms = new ArrayList<>();
     private RoomListAdapter adapter;
     private static DateTime currentDate;
     private DateTimeFormatter fmt;
+    private boolean filtered = false;
 
     //UI Components
     private RelativeLayout sendPassClickSection;
@@ -55,6 +60,9 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
     private ExpandableListView vListView;
     private ProgressBar vLoadingBar;
     private TextView tCurrentDate;
+    private RelativeLayout toolBarLayout;
+    private Toolbar toolbar;
+    private EditText filterSearch;
 
     /**
      * Adapter can easily get room list without adding memory complexity on copying values or
@@ -63,7 +71,7 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
      */
 
     public List<Room> getRooms() {
-        return rooms;
+        return filtered ? roomsFiltered : rooms;
     }
 
     public static DateTime getSelectedDate() {
@@ -89,6 +97,14 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
         Log.i(TAG,response);
         try {
             rooms = Room.getRooms(response);
+
+            /**
+             * This simulates the process of writing, with what's written (on the filter query),
+             * so the search filter can be set when changing dates with already filtered rooms
+             */
+            if(filterSearch.getText().length()>0)
+                new SearchTextWatcher().afterTextChanged(filterSearch.getEditableText());
+
             adapter.notifyDataSetChanged();
             vListView.setSelectionFromTop(0,0);
             showProgress(false);
@@ -128,6 +144,7 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
         sendPassDesc = (TextView) findViewById(R.id.sendPassDesc);
 
         configureHeader();
+        configureFilters();
 
         adapter = new RoomListAdapter(getApplicationContext(),this);
         vListView.setAdapter(adapter);
@@ -163,9 +180,6 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
         });
 
         showProgress(true);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
     }
 
@@ -214,11 +228,27 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
         }
     }
 
+    public void configureFilters() {
+        /**
+         * Along the app code, some of these onFocusChangeListeners will appear in order to dismiss
+         * the keyboard when the user touches on anything but it. I created a static class to re-use
+         * code.
+         */
+        filterSearch = (EditText) findViewById(R.id.filter_room_name);
+        filterSearch.setOnFocusChangeListener(new UIHelpers.EditTextFocusChangeListener(getBaseContext()));
+
+        filterSearch.addTextChangedListener(new SearchTextWatcher());
+    }
+
 
     public void configureHeader() {
-        ImageView prevDay = (ImageView) findViewById(R.id.prevDayImageBtn);
-        ImageView nextDay = (ImageView) findViewById(R.id.nextDayImageBtn);
-        tCurrentDate = (TextView) findViewById(R.id.currentDate);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setContentInsetsAbsolute(0,0);
+
+        toolBarLayout = (RelativeLayout) findViewById(R.id.toolbar_layout);
+        ImageView prevDay = (ImageView) toolBarLayout.findViewById(R.id.prevDayImageBtn);
+        ImageView nextDay = (ImageView) toolBarLayout.findViewById(R.id.nextDayImageBtn);
+        tCurrentDate = (TextView) toolBarLayout.findViewById(R.id.currentDate);
 
         currentDate = new DateTime();
         fmt = DateTimeFormat.forPattern("dd-MM-yyyy")
@@ -265,6 +295,39 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
             sendPassClickSection.setVisibility(View.GONE);
             showProgress(true);
             networkHelper.process();
+        }
+    }
+
+    /**
+     * This class acts as the catalyzer for the search process
+     */
+
+    class SearchTextWatcher implements TextWatcher {
+
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            sendPassClickSection.setVisibility(View.GONE);
+            String searchQuery = editable.toString();
+            filtered=!searchQuery.equals("");
+
+            roomsFiltered = new ArrayList<>();
+            for(Room room : rooms)
+            {
+                if(room.name.contains(searchQuery))
+                    roomsFiltered.add(room);
+            }
+
+            adapter.notifyDataSetChanged();
         }
     }
 }

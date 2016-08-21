@@ -10,6 +10,9 @@
     <string name="toolbar_title_sending">Sending...</string>
     <string name="toolbar_title_success">Success</string>
     <string name="toolbar_title_error">Error</string>
+    <string name="activity_rooms_filter">Filter:</string>
+    <string name="activity_rooms_filter_room_name_hint">Room Name</string>
+    <string name="activity_rooms_filter_available_one_hour">Avail. in 1 hour</string>
 
     <string name="sendpass_passes_empty_name">Name can\'t be empty</string>
     <string name="sendpass_passes_invalid_email">Invalid Email</string>

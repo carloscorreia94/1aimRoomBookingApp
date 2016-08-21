@@ -37,6 +37,7 @@
         android:textColorHint="@color/text_list_values"
         android:textColor="@color/text_list_detail"
         android:textSize="16sp"
+        android:imeOptions="actionDone"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="10dp" />
     <Button
