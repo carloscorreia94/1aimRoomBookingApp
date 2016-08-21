@@ -19,6 +19,10 @@ import java.util.Map;
  * Created by carloscorreia on 18/08/16.
  */
 public class NetworkHelper {
+    /**
+     * Network helper embedding Volley Requests in order to centralize the API HTTPS requests
+     * and provide a better interface for the calling code throughout the app
+     */
 
     public enum ListenerTypes {
         JSONRequestListener, SimpleListener
@@ -51,7 +55,6 @@ public class NetworkHelper {
     }
 
     /**
-     *
      * This is the only type of request processing we're going to use throughout the app.
      */
     private void processJSON() {

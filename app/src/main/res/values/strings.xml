@@ -20,6 +20,7 @@
     <string name="sendpass_info_empty_event_desc">Empty event description</string>
 
     <string name="sendpass_confirm_error">Error sending passes.</string>
+    <string name="sendpass_confirm_error_index">Error sending pass number %1$d on the list. Delete it and try again.</string>
     <string name="sendpass_confirm_error_phone">Error sending passes. There are incorrect phone numbers on the list</string>
     <string name="sendpass_confirm_success">All passes succeeded on sending.</string>
     <string name="sendpass_confirm_error_code">Error sending passes - Code %1$d , contact administrator </string>

@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.google.gson.Gson;
@@ -26,7 +25,6 @@ import com.oneaim.roombooking.main.send_pass.PassesUI;
 import com.oneaim.roombooking.main.send_pass.SendPassesListener;
 import com.oneaim.roombooking.models.Room;
 
-import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -46,6 +44,14 @@ public class SendPassActivity extends AppCompatActivity implements SendPassesLis
     private TextView toolBarTitle;
     private RelativeLayout toolBarLayout;
 
+    /**
+     * Concerning the list of variables that follow,
+     * I've chosen this approach instead of using fragments so I didn't had to deal with tons of
+     * lifecycle events for this is a simple UI and has simple functionality and memory usage.
+     * The approach consists in hiding and showing views. The code for each one of them
+     * (functionality) is spread through other classes
+     * created to provide a better readability, code quality and re-usage.
+     */
     private LinearLayout vBase, vPasses, vConfirm;
     private ImageView bGoBack, bGoFront, bComplete, bClose;
 
@@ -108,18 +114,17 @@ public class SendPassActivity extends AppCompatActivity implements SendPassesLis
                         roomMainPicture, UIHelpers.Constants.optionsMainRoom,
                         UIHelpers.Constants.animateFirstListener);
 
-
-
-
-
-       // test = (TextView) findViewById(R.id.test);
-       // test.setText(String.valueOf(args.getInt("room")));
     }
 
     public void sendPasses() {
         processingRequest = true;
         networkHelper.process();
     }
+
+    /**
+     * Method conforming to the interface JSONRequestListener.
+     * Easily changing request body this way.
+     */
 
     public JSONObject getRequestBody() {
         HashMap<String, Object> values = new HashMap<>();
@@ -129,7 +134,7 @@ public class SendPassActivity extends AppCompatActivity implements SendPassesLis
 
         //Static values for timeline values, as it's not implemented.
         long staticFromTime = RoomsActivity.getSelectedDate().plusHours(12).getMillis() / 1000;
-        long staticToTime = RoomsActivity.getSelectedDate().plusHours(23).getMillis() / 1000;
+        long staticToTime = RoomsActivity.getSelectedDate().plusHours(13).getMillis() / 1000;
 
         bookingValues.put("date",unixStamp);
         bookingValues.put("time_start",staticFromTime);
@@ -151,6 +156,12 @@ public class SendPassActivity extends AppCompatActivity implements SendPassesLis
 
     }
 
+    /**
+     * Next two methods are also conforming to the interface JSONRequestListener.
+     * Needed as async callbacks to the
+     * Network Process.
+     */
+
     public void successResponse(String response) {
         processingRequest = false;
         Log.i(TAG,response);
@@ -164,7 +175,18 @@ public class SendPassActivity extends AppCompatActivity implements SendPassesLis
                         setConfirmError(getString(R.string.sendpass_confirm_error_phone));
                         break;
                     default:
-                        setConfirmError(String.format(getString(R.string.sendpass_confirm_error_code)
+                        if(resp.getJSONObject("error").getInt("code") > 4000) {
+                            /** I wasn't able to reproduce this error, i.e a specific pass not
+                             * being able to be sent, so not 100% sure if this would work,
+                             * as in the description the json key for the index
+                             * is not written explicitly
+                             *
+                             * Index is incremented one value as the list keys start on 0
+                             */
+                            setConfirmError(String.format(getString(R.string.sendpass_confirm_error_index)
+                                    ,resp.getJSONObject("error").getInt("index")+1));
+                        } else
+                            setConfirmError(String.format(getString(R.string.sendpass_confirm_error_code)
                                 ,resp.getJSONObject("error").getInt("code")));
                 }
             } else
@@ -181,6 +203,11 @@ public class SendPassActivity extends AppCompatActivity implements SendPassesLis
         setConfirmError(getString(R.string.error_network_unknown));
     }
 
+    /**
+     * Next two Methods serve the purpose to mutate the UI
+     * on the Activity before handling the "confirmationUI" properties
+     */
+
     public void setSuccessConfirmation() {
         confirmUI.setSuccess();
         toolBarTitle.setText(R.string.toolbar_title_success);
@@ -194,6 +221,12 @@ public class SendPassActivity extends AppCompatActivity implements SendPassesLis
         bClose.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * The magic of the "headerbar" icons happens here. Instead of having a tradicional Android
+     * menu, with the AppCompat bar (prev ActionBar) I've created a layout inside of a Toolbar
+     * and defined my logic in terms of hiding and showing buttons on the UI and changing their
+     * behaviors in order to hide/show the views that lay on the activity
+     */
 
     class GoBackClickHandler implements View.OnClickListener {
 

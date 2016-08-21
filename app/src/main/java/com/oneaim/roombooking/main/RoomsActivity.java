@@ -56,6 +56,12 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
     private ProgressBar vLoadingBar;
     private TextView tCurrentDate;
 
+    /**
+     * Adapter can easily get room list without adding memory complexity on copying values or
+     * having other strong references
+     * @return List of the rooms available from the API call
+     */
+
     public List<Room> getRooms() {
         return rooms;
     }
@@ -64,9 +70,20 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
         return currentDate;
     }
 
+    /**
+     * Method conforming to the interface JSONRequestListener.
+     * Easily changing request body this way.
+     */
+
     public JSONObject getRequestBody() {
         return new JSONObject(mapRequest);
     }
+
+    /**
+     * Next two methods are also conforming to the interface JSONRequestListener.
+     * Needed as async callbacks to the
+     * Network Process.
+     */
 
     public void successResponse(String response) {
         Log.i(TAG,response);
@@ -152,6 +169,12 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
 
     }
 
+    /**
+     * Here we open the new screen (Activity) and save the current room as a static member of
+     * the class room. More transparent way of dealing with data instead of sending it through
+     * an intent, serializing and de-serializing again
+     * @param roomNumber room number on the list
+     */
     public void openSendPass(int roomNumber) {
         Room.setCurrentRoom(rooms.get(roomNumber));
         Intent intent = new Intent(RoomsActivity.this,SendPassActivity.class);
@@ -211,8 +234,14 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
         Previous,Next
     }
 
+    /**
+     * Time is obtained with resource to the JODA Library for ease of time manipulation. This
+     * click listener changes the current date variable on the Activity and requests the API
+     * right next.
+     */
+
     class TimeClickListener implements View.OnClickListener {
-        DayType type;
+        private DayType type;
 
         public TimeClickListener(DayType type) {
             this.type = type;

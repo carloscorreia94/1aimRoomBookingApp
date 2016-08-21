@@ -39,7 +39,6 @@ public class RoomListAdapter extends BaseExpandableListAdapter {
     }
 
 
-
     @Override
     public int getGroupCount() {
         return listener.getRooms().size();
@@ -112,6 +111,11 @@ public class RoomListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int i, int i1, boolean b, View convertView, ViewGroup viewGroup) {
+        /**
+         * Usually the purpose of the ExtendedListView, is to have multiple child for each
+         * parent row. Here, we only have a a child per parent. Meaning, that I've put the whole
+         * detail of a room in a child "cell".
+         */
         final RoomDetailsHolder holder;
 
         if (convertView == null) {
