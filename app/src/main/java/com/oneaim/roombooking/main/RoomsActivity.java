@@ -11,6 +11,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
@@ -63,6 +64,7 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
     private RelativeLayout toolBarLayout;
     private Toolbar toolbar;
     private EditText filterSearch;
+    private CheckedTextView oneHourFilter;
 
     /**
      * Adapter can easily get room list without adding memory complexity on copying values or
@@ -104,6 +106,8 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
              */
             if(filterSearch.getText().length()>0)
                 new SearchTextWatcher().afterTextChanged(filterSearch.getEditableText());
+           // if(oneHourFilter.isChecked())
+             //   new OneHourFilterClickListener().onClick(oneHourFilter);
 
             adapter.notifyDataSetChanged();
             vListView.setSelectionFromTop(0,0);
@@ -236,8 +240,10 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
          */
         filterSearch = (EditText) findViewById(R.id.filter_room_name);
         filterSearch.setOnFocusChangeListener(new UIHelpers.EditTextFocusChangeListener(getBaseContext()));
-
         filterSearch.addTextChangedListener(new SearchTextWatcher());
+
+        oneHourFilter = (CheckedTextView) findViewById(R.id.filter_one_hour);
+       // oneHourFilter.setOnClickListener(new OneHourFilterClickListener());
     }
 
 
@@ -318,7 +324,9 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
         public void afterTextChanged(Editable editable) {
             sendPassClickSection.setVisibility(View.GONE);
             String searchQuery = editable.toString();
-            filtered=!searchQuery.equals("");
+
+            List<Room> rooms = getRooms();
+            filtered=filterSearch.getText().length()>0 || oneHourFilter.isChecked();
 
             roomsFiltered = new ArrayList<>();
             for(Room room : rooms)
@@ -327,7 +335,40 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
                     roomsFiltered.add(room);
             }
 
+
             adapter.notifyDataSetChanged();
         }
     }
+
+
+   /* class OneHourFilterClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View view) {
+            CheckedTextView checkedView = (CheckedTextView) view;
+            checkedView.setChecked(!checkedView.isChecked());
+            /**
+             * I keep a new reference of the rooms because we need to combine both filters, and
+             * iterate through the meaningful collection before changing the condition that can
+             * change the boolean that changes the way getRooms returns (hard to explain...)
+             */
+         /*   List<Room> rooms = getRooms();
+            filtered = filterSearch.getText().length()>0 || checkedView.isChecked();
+
+
+            roomsFiltered = new ArrayList<>();
+            for(Room room : checkedView.isChecked() ? rooms : RoomsActivity.this.rooms)
+            {
+                if(room.location.contains("Floor 1"))
+                    roomsFiltered.add(room);
+            }
+
+            if(!checkedView.isChecked() && filterSearch.getText().length()>0)
+                new SearchTextWatcher().afterTextChanged(filterSearch.getText());
+
+
+            adapter.notifyDataSetChanged();
+
+        }
+    } */
 }
