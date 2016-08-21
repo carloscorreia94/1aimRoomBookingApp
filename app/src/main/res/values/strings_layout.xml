@@ -10,4 +10,9 @@
     <!-- Strings for Input -->
     <string name="sendpass_base_event_name_hint">Event name:</string>
     <string name="sendpass_base_event_description_hint">Event description:</string>
+    <string name="sendpass_passes_name_hint">Person name:</string>
+    <string name="sendpass_passes_email_hint">Email:</string>
+    <string name="sendpass_passes_phone_hint">Phone:</string>
+    <string name="sendpass_passes_add_person">Add Person</string>
+    <string name="sendpass_passes_person_desc">Persons:</string>
 </resources>

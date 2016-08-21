@@ -14,6 +14,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.oneaim.roombooking.R;
 import com.oneaim.roombooking.helper.APIEndpoints;
 import com.oneaim.roombooking.helper.UIHelpers;
+import com.oneaim.roombooking.main.send_pass.PassesUI;
 import com.oneaim.roombooking.models.Room;
 
 public class SendPassActivity extends AppCompatActivity {
@@ -32,6 +33,9 @@ public class SendPassActivity extends AppCompatActivity {
     //UI Header Components
     private ImageView roomMainPicture;
     private TextView roomName, roomDate;
+
+    //UI Helpers
+    private PassesUI passesUI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +117,11 @@ public class SendPassActivity extends AppCompatActivity {
                 case Base:
                     viewOnScreen = ViewOnScreen.Passes;
                     toolBarTitle.setText(R.string.toolbar_title_passes);
+
+                    if(passesUI==null) {
+                        passesUI = new PassesUI(vPasses,getApplicationContext());
+                        passesUI.renderLayout();
+                    }
 
                     vBase.setVisibility(View.GONE);
                     vPasses.setVisibility(View.VISIBLE);
