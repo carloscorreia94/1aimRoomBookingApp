@@ -12,6 +12,7 @@ import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 /**
@@ -67,6 +68,14 @@ public class NetworkHelper {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Error: " + error.getMessage());
+                if(error.networkResponse!=null) {
+                    try {
+                        Log.i(TAG, "Error - Body: " + new String(error.networkResponse.data,"UTF-8"));
+
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                }
                 jsonListener.errorResponse();
             }
         };
@@ -74,6 +83,9 @@ public class NetworkHelper {
         StringRequest request = new StringRequest(method,url,successListener,errorListener) {
             @Override
             public byte[] getBody() throws AuthFailureError {
+                if(jsonListener.getRequestBody()==null)
+                    return null;
+                Log.d(TAG,jsonListener.getRequestBody().toString());
                 return jsonListener.getRequestBody().toString().getBytes();
             }
 

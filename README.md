@@ -14,6 +14,7 @@
 
 ## Libraries Used
 
+* GSON
 * Volley Network Library
 * Universal Image Loader
 * Apache Commons Lang

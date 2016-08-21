@@ -34,6 +34,14 @@ public class InfoUI {
     }
 
 
+    public String getEventName() {
+        return eventName;
+    }
+
+    public String getEventDescription() {
+        return eventDescription;
+    }
+
     public boolean canProceed() {
         eventName = vEventName.getText().toString();
         eventDescription = vEventDescription.getText().toString();

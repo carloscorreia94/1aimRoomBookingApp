@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
+import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.oneaim.roombooking.R;
 import com.oneaim.roombooking.helper.APIEndpoints;
@@ -25,6 +26,7 @@ import com.oneaim.roombooking.main.send_pass.PassesUI;
 import com.oneaim.roombooking.main.send_pass.SendPassesListener;
 import com.oneaim.roombooking.models.Room;
 
+import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -120,10 +122,33 @@ public class SendPassActivity extends AppCompatActivity implements SendPassesLis
     }
 
     public JSONObject getRequestBody() {
-        HashMap<String, String> values = new HashMap<>();
-        values.put("test","test");
+        HashMap<String, Object> values = new HashMap<>();
+        HashMap<String, Object> bookingValues = new HashMap<>();
 
-        return new JSONObject(values);
+        long unixStamp = RoomsActivity.getSelectedDate().getMillis() / 1000;
+
+        //Static values for timeline values, as it's not implemented.
+        long staticFromTime = RoomsActivity.getSelectedDate().plusHours(12).getMillis() / 1000;
+        long staticToTime = RoomsActivity.getSelectedDate().plusHours(23).getMillis() / 1000;
+
+        bookingValues.put("date",unixStamp);
+        bookingValues.put("time_start",staticFromTime);
+        bookingValues.put("time_end",staticToTime);
+        bookingValues.put("title",infoUI.getEventName());
+        bookingValues.put("description",infoUI.getEventDescription());
+        bookingValues.put("room",sendPassRoom.name);
+
+        values.put("booking",bookingValues);
+        values.put("passes",passesUI.getPasses());
+
+        try {
+            String json = new Gson().toJson(values);
+            return new JSONObject(json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+
     }
 
     public void successResponse(String response) {
@@ -131,9 +156,18 @@ public class SendPassActivity extends AppCompatActivity implements SendPassesLis
         Log.i(TAG,response);
         try {
             JSONObject resp = new JSONObject(response);
-            if(resp.getBoolean("success"))
+            if(resp.has("success") && resp.getBoolean("success"))
                 setSuccessConfirmation();
-            else
+            else if(resp.has("error")) {
+                switch(resp.getJSONObject("error").getInt("code")) {
+                    case 3000:
+                        setConfirmError(getString(R.string.sendpass_confirm_error_phone));
+                        break;
+                    default:
+                        setConfirmError(String.format(getString(R.string.sendpass_confirm_error_code)
+                                ,resp.getJSONObject("error").getInt("code")));
+                }
+            } else
                 setConfirmError(getString(R.string.sendpass_confirm_error));
 
         } catch (JSONException e) {

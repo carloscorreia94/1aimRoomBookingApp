@@ -46,7 +46,7 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
     private NetworkHelper networkHelper;
     private List<Room> rooms = new ArrayList<>();
     private RoomListAdapter adapter;
-    private DateTime currentDate;
+    private static DateTime currentDate;
     private DateTimeFormatter fmt;
 
     //UI Components
@@ -58,6 +58,10 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
 
     public List<Room> getRooms() {
         return rooms;
+    }
+
+    public static DateTime getSelectedDate() {
+        return currentDate;
     }
 
     public JSONObject getRequestBody() {

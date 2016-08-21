@@ -16,10 +16,13 @@
     <string name="sendpass_passes_invalid_phone">Invalid Phone</string>
     <string name="sendpass_passes_error_no_persons">One pass at least needed!</string>
 
-    <string name="sendpass_info_empty_event_name">Empty event name</string>
+    <string name="sendpass_info_empty_event_name">Empty event title</string>
     <string name="sendpass_info_empty_event_desc">Empty event description</string>
 
     <string name="sendpass_confirm_error">Error sending passes.</string>
+    <string name="sendpass_confirm_error_phone">Error sending passes. There are incorrect phone numbers on the list</string>
     <string name="sendpass_confirm_success">All passes succeeded on sending.</string>
+    <string name="sendpass_confirm_error_code">Error sending passes - Code %1$d , contact administrator </string>
+
 
 </resources>

@@ -20,7 +20,9 @@ import com.oneaim.roombooking.R;
 import com.oneaim.roombooking.helper.UIHelpers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,6 +46,19 @@ public class PassesUI {
         this.peopleList = new ArrayList<>();
     }
 
+
+    public List<HashMap<String,String>> getPasses() {
+        List<HashMap<String,String>> passes = new ArrayList<>();
+
+        for(Person p : peopleList) {
+            HashMap<String,String> personMap = new HashMap<>();
+            personMap.put("name",p.name);
+            personMap.put("email",p.email);
+            personMap.put("number",p.phone);
+            passes.add(personMap);
+        }
+        return passes;
+    }
 
     public void renderLayout() {
         vName = (EditText) view.findViewById(R.id.pass_person_name);
@@ -178,6 +193,7 @@ public class PassesUI {
                 holder = new PersonVHolder();
 
                 holder.name = (TextView) view.findViewById(R.id.person_name);
+                holder.phone = (TextView) view.findViewById(R.id.person_phone);
                 holder.delete = (ImageView) view.findViewById(R.id.person_delete);
 
                 view.setTag(holder);
@@ -189,6 +205,7 @@ public class PassesUI {
             Person p = getItem(i);
 
             holder.name.setText(p.name);
+            holder.phone.setText(p.phone);
             holder.delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -201,7 +218,7 @@ public class PassesUI {
         }
 
         class PersonVHolder {
-            TextView name;
+            TextView name,phone;
             ImageView delete;
         }
     }
