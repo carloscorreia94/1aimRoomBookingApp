@@ -1,10 +1,12 @@
 package com.oneaim.roombooking.main.send_pass;
 
+import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.oneaim.roombooking.R;
+import com.oneaim.roombooking.helper.UIHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +52,11 @@ public class PassesUI {
         addPerson = (Button) view.findViewById(R.id.add_person);
         vPersonList = (ListView) view.findViewById(R.id.person_list);
 
+        vName.setOnFocusChangeListener(new UIHelpers.EditTextFocusChangeListener(context));
+        vEmail.setOnFocusChangeListener(new UIHelpers.EditTextFocusChangeListener(context));
+        vPhone.setOnFocusChangeListener(new UIHelpers.EditTextFocusChangeListener(context));
+
+
         final PersonAdapter adapter = new PersonAdapter();
         vPersonList.setAdapter(adapter);
 
@@ -70,6 +78,10 @@ public class PassesUI {
                     vName.setText("");
                     vEmail.setText("");
                     vPhone.setText("");
+
+                    InputMethodManager inputMethodManager =
+                            (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+                    inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
 
             }
@@ -79,7 +91,8 @@ public class PassesUI {
 
     public boolean canProceed() {
         if(peopleList.size()==0) {
-            Toast.makeText(context,R.string.sendpass_passes_error_no_persons,Toast.LENGTH_SHORT).show();
+            Toast.makeText(context,R.string.sendpass_passes_error_no_persons,Toast.LENGTH_SHORT)
+                    .show();
             return false;
         }
         return true;

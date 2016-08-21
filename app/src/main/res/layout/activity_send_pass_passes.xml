@@ -30,7 +30,7 @@
         android:layout_marginTop="10dp" />
     <EditText android:id="@+id/pass_phone" android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/sendpass_passes_name_hint"
+        android:hint="@string/sendpass_passes_phone_hint"
         android:maxLines="1"
         android:singleLine="true"
         android:inputType="phone"

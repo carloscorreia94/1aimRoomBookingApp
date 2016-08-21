@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.oneaim.roombooking.R;
+import com.oneaim.roombooking.helper.UIHelpers;
 
 
 /**
@@ -27,6 +28,9 @@ public class InfoUI {
     public void renderLayout() {
         vEventName = (EditText) view.findViewById(R.id.event_name);
         vEventDescription = (EditText) view.findViewById(R.id.event_description);
+
+        vEventName.setOnFocusChangeListener(new UIHelpers.EditTextFocusChangeListener(context));
+        vEventDescription.setOnFocusChangeListener(new UIHelpers.EditTextFocusChangeListener(context));
     }
 
 
@@ -58,4 +62,6 @@ public class InfoUI {
         }
         return true;
     }
+
+
 }

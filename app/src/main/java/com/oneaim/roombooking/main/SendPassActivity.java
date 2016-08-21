@@ -4,24 +4,40 @@ package com.oneaim.roombooking.main;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.oneaim.roombooking.R;
 import com.oneaim.roombooking.helper.APIEndpoints;
+import com.oneaim.roombooking.helper.JSONRequestListener;
+import com.oneaim.roombooking.helper.NetworkHelper;
 import com.oneaim.roombooking.helper.UIHelpers;
+import com.oneaim.roombooking.main.send_pass.ConfirmationUI;
 import com.oneaim.roombooking.main.send_pass.InfoUI;
 import com.oneaim.roombooking.main.send_pass.PassesUI;
+import com.oneaim.roombooking.main.send_pass.SendPassesListener;
 import com.oneaim.roombooking.models.Room;
 
-public class SendPassActivity extends AppCompatActivity {
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+
+public class SendPassActivity extends AppCompatActivity implements SendPassesListener, JSONRequestListener {
+
+    public static final String TAG = SendPassActivity.class.getSimpleName();
 
     private ViewOnScreen viewOnScreen = ViewOnScreen.Base;
     private Room sendPassRoom;
+    private NetworkHelper networkHelper;
+    private boolean processingRequest = false;
 
     //UI Components
 
@@ -29,7 +45,7 @@ public class SendPassActivity extends AppCompatActivity {
     private RelativeLayout toolBarLayout;
 
     private LinearLayout vBase, vPasses, vConfirm;
-    private ImageView bGoBack, bGoFront, bComplete;
+    private ImageView bGoBack, bGoFront, bComplete, bClose;
 
     //UI Header Components
     private ImageView roomMainPicture;
@@ -38,10 +54,14 @@ public class SendPassActivity extends AppCompatActivity {
     //UI Helpers
     private InfoUI infoUI;
     private PassesUI passesUI;
+    private ConfirmationUI confirmUI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        networkHelper = new NetworkHelper(APIEndpoints.SEND_PASS, Request.Method.POST);
+        networkHelper.setListener(this);
+
         setContentView(R.layout.activity_send_pass);
 
         toolBarLayout = (RelativeLayout) findViewById(R.id.toolbar_layout);
@@ -50,6 +70,14 @@ public class SendPassActivity extends AppCompatActivity {
         bGoBack = (ImageView) toolBarLayout.findViewById(R.id.btn_img_go_back);
         bGoFront = (ImageView) toolBarLayout.findViewById(R.id.btn_img_go_front);
         bComplete = (ImageView) toolBarLayout.findViewById(R.id.btn_img_complete_task);
+        bClose = (ImageView) toolBarLayout.findViewById(R.id.btn_img_close);
+
+        bClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
         vBase = (LinearLayout) findViewById(R.id.view_send_pass_base);
         vPasses = (LinearLayout) findViewById(R.id.view_send_pass_passes);
@@ -86,10 +114,60 @@ public class SendPassActivity extends AppCompatActivity {
        // test.setText(String.valueOf(args.getInt("room")));
     }
 
+    public void sendPasses() {
+        processingRequest = true;
+        networkHelper.process();
+    }
+
+    public JSONObject getRequestBody() {
+        HashMap<String, String> values = new HashMap<>();
+        values.put("test","test");
+
+        return new JSONObject(values);
+    }
+
+    public void successResponse(String response) {
+        processingRequest = false;
+        Log.i(TAG,response);
+        try {
+            JSONObject resp = new JSONObject(response);
+            if(resp.getBoolean("success"))
+                setSuccessConfirmation();
+            else
+                setConfirmError(getString(R.string.sendpass_confirm_error));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            setConfirmError(getString(R.string.error_parsing_data));
+        }
+    }
+
+    public void errorResponse() {
+        processingRequest = false;
+        setConfirmError(getString(R.string.error_network_unknown));
+    }
+
+    public void setSuccessConfirmation() {
+        confirmUI.setSuccess();
+        toolBarTitle.setText(R.string.toolbar_title_success);
+        bClose.setVisibility(View.VISIBLE);
+    }
+
+    public void setConfirmError(String error) {
+        confirmUI.setError(error);
+        toolBarTitle.setText(R.string.toolbar_title_error);
+        bGoBack.setVisibility(View.VISIBLE);
+        bClose.setVisibility(View.VISIBLE);
+    }
+
+
     class GoBackClickHandler implements View.OnClickListener {
 
         @Override
         public void onClick(View view) {
+            if(processingRequest)
+                return;
+
             switch(viewOnScreen) {
                 case Base:
                     finish();
@@ -100,6 +178,9 @@ public class SendPassActivity extends AppCompatActivity {
 
                     vPasses.setVisibility(View.GONE);
                     vBase.setVisibility(View.VISIBLE);
+
+                    bComplete.setVisibility(View.GONE);
+                    bGoFront.setVisibility(View.VISIBLE);
                     break;
                 case Confirm:
                     viewOnScreen = ViewOnScreen.Passes;
@@ -108,8 +189,8 @@ public class SendPassActivity extends AppCompatActivity {
                     vConfirm.setVisibility(View.GONE);
                     vPasses.setVisibility(View.VISIBLE);
 
-                    bComplete.setVisibility(View.GONE);
-                    bGoFront.setVisibility(View.VISIBLE);
+                    bComplete.setVisibility(View.VISIBLE);
+                    bClose.setVisibility(View.GONE);
                     break;
             }
 
@@ -133,15 +214,6 @@ public class SendPassActivity extends AppCompatActivity {
 
                         vBase.setVisibility(View.GONE);
                         vPasses.setVisibility(View.VISIBLE);
-                    }
-                    break;
-                case Passes:
-                    if(passesUI.canProceed()) {
-                        viewOnScreen = ViewOnScreen.Confirm;
-                        toolBarTitle.setText(R.string.toolbar_title_confirmation);
-
-                        vPasses.setVisibility(View.GONE);
-                        vConfirm.setVisibility(View.VISIBLE);
 
                         bComplete.setVisibility(View.VISIBLE);
                         bGoFront.setVisibility(View.GONE);
@@ -155,7 +227,25 @@ public class SendPassActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View view) {
-            finish();
+            if(passesUI.canProceed()) {
+                viewOnScreen = ViewOnScreen.Confirm;
+                toolBarTitle.setText(R.string.toolbar_title_sending);
+
+                bGoBack.setVisibility(View.GONE);
+                bComplete.setVisibility(View.GONE);
+
+                if(confirmUI==null) {
+                    confirmUI = new ConfirmationUI(vConfirm,getApplicationContext(),SendPassActivity.this);
+                    confirmUI.renderLayout();
+                }
+
+                confirmUI.showProgress(true);
+                sendPasses();
+
+                vPasses.setVisibility(View.GONE);
+                vConfirm.setVisibility(View.VISIBLE);
+            }
+
         }
     }
 

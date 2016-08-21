@@ -1,5 +1,10 @@
 # RoomBooking App 
 
+## Not Implemented
+
+* Passes Check for duplicates and real phone numbers (only accepting numbers with more than 8 chars)
+* Timeline is not implemented - sent statically from 12h to 23h
+
 ## Tools Used
 
 * Android SDK

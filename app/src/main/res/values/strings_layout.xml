@@ -15,4 +15,5 @@
     <string name="sendpass_passes_phone_hint">Phone:</string>
     <string name="sendpass_passes_add_person">Add Person</string>
     <string name="sendpass_passes_person_desc">Persons:</string>
+    <string name="sendpass_confirm_try_again">Try Again</string>
 </resources>

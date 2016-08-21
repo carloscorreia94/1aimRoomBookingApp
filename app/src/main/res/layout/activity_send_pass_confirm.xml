@@ -3,12 +3,33 @@
     android:id="@+id/view_send_pass_confirm"
     android:visibility="gone"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="CONFIRM"
-        android:textStyle="bold"
-        android:textSize="30dp"
+    android:layout_height="match_parent"
+    android:paddingRight="20dp"
+    android:paddingLeft="20dp">
+    <ProgressBar android:id="@+id/loading_progress" style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:layout_gravity="center_horizontal"/>
+    <LinearLayout
+        android:id="@+id/holding_view"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+        <TextView
+            android:id="@+id/network_complete_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:textSize="25sp"
+            android:layout_gravity="center_horizontal" />
+        <Button
+            android:id="@+id/sendpass_confirm_try_again"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/sendpass_confirm_try_again"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"/>
+    </LinearLayout>
 </LinearLayout>

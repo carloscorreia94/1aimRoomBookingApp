@@ -74,6 +74,7 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
 
         } catch (JSONException e) {
             e.printStackTrace();
+            showProgress(false);
             Toast.makeText(getApplicationContext(),
                     R.string.error_parsing_data, Toast.LENGTH_LONG).show();
         }
