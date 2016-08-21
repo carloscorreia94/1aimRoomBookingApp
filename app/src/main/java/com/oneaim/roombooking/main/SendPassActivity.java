@@ -14,6 +14,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.oneaim.roombooking.R;
 import com.oneaim.roombooking.helper.APIEndpoints;
 import com.oneaim.roombooking.helper.UIHelpers;
+import com.oneaim.roombooking.main.send_pass.InfoUI;
 import com.oneaim.roombooking.main.send_pass.PassesUI;
 import com.oneaim.roombooking.models.Room;
 
@@ -35,6 +36,7 @@ public class SendPassActivity extends AppCompatActivity {
     private TextView roomName, roomDate;
 
     //UI Helpers
+    private InfoUI infoUI;
     private PassesUI passesUI;
 
     @Override
@@ -52,6 +54,9 @@ public class SendPassActivity extends AppCompatActivity {
         vBase = (LinearLayout) findViewById(R.id.view_send_pass_base);
         vPasses = (LinearLayout) findViewById(R.id.view_send_pass_passes);
         vConfirm = (LinearLayout) findViewById(R.id.view_send_pass_confirm);
+
+        infoUI = new InfoUI(vBase,getApplicationContext());
+        infoUI.renderLayout();
 
         bGoBack.setOnClickListener(new GoBackClickHandler());
         bGoFront.setOnClickListener(new GoFrontClickHandler());
@@ -72,6 +77,8 @@ public class SendPassActivity extends AppCompatActivity {
                 .displayImage(APIEndpoints.API_URL + sendPassRoom.images[0],
                         roomMainPicture, UIHelpers.Constants.optionsMainRoom,
                         UIHelpers.Constants.animateFirstListener);
+
+
 
 
 
@@ -115,26 +122,30 @@ public class SendPassActivity extends AppCompatActivity {
         public void onClick(View view) {
             switch(viewOnScreen) {
                 case Base:
-                    viewOnScreen = ViewOnScreen.Passes;
-                    toolBarTitle.setText(R.string.toolbar_title_passes);
+                    if(infoUI.canProceed()) {
+                        viewOnScreen = ViewOnScreen.Passes;
+                        toolBarTitle.setText(R.string.toolbar_title_passes);
 
-                    if(passesUI==null) {
-                        passesUI = new PassesUI(vPasses,getApplicationContext());
-                        passesUI.renderLayout();
+                        if(passesUI==null) {
+                            passesUI = new PassesUI(vPasses,getApplicationContext());
+                            passesUI.renderLayout();
+                        }
+
+                        vBase.setVisibility(View.GONE);
+                        vPasses.setVisibility(View.VISIBLE);
                     }
-
-                    vBase.setVisibility(View.GONE);
-                    vPasses.setVisibility(View.VISIBLE);
                     break;
                 case Passes:
-                    viewOnScreen = ViewOnScreen.Confirm;
-                    toolBarTitle.setText(R.string.toolbar_title_confirmation);
+                    if(passesUI.canProceed()) {
+                        viewOnScreen = ViewOnScreen.Confirm;
+                        toolBarTitle.setText(R.string.toolbar_title_confirmation);
 
-                    vPasses.setVisibility(View.GONE);
-                    vConfirm.setVisibility(View.VISIBLE);
+                        vPasses.setVisibility(View.GONE);
+                        vConfirm.setVisibility(View.VISIBLE);
 
-                    bComplete.setVisibility(View.VISIBLE);
-                    bGoFront.setVisibility(View.GONE);
+                        bComplete.setVisibility(View.VISIBLE);
+                        bGoFront.setVisibility(View.GONE);
+                    }
                     break;
             }
         }

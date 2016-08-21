@@ -1,6 +1,7 @@
 package com.oneaim.roombooking.main.send_pass;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +12,14 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.oneaim.roombooking.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by carloscorreia on 21/08/16.
@@ -26,7 +30,7 @@ public class PassesUI {
     private Context context;
     private List<Person> peopleList;
 
-    private EditText name, email, phone;
+    private EditText vName, vEmail, vPhone;
     private Button addPerson;
     private ListView vPersonList;
 
@@ -39,9 +43,9 @@ public class PassesUI {
 
 
     public void renderLayout() {
-        name = (EditText) view.findViewById(R.id.pass_person_name);
-        email = (EditText) view.findViewById(R.id.pass_email);
-        phone = (EditText) view.findViewById(R.id.pass_phone);
+        vName = (EditText) view.findViewById(R.id.pass_person_name);
+        vEmail = (EditText) view.findViewById(R.id.pass_email);
+        vPhone = (EditText) view.findViewById(R.id.pass_phone);
         addPerson = (Button) view.findViewById(R.id.add_person);
         vPersonList = (ListView) view.findViewById(R.id.person_list);
 
@@ -51,14 +55,77 @@ public class PassesUI {
         addPerson.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Person p = new Person();
-                p.name = name.getText().toString();
-                p.email = email.getText().toString();
-                p.phone = phone.getText().toString();
-                peopleList.add(p);
-                adapter.notifyDataSetChanged();
+                String name,email,phone;
+                name = vName.getText().toString();
+                email = vEmail.getText().toString();
+                phone = vPhone.getText().toString();
+                if(verifyPerson(name,email,phone)) {
+                    Person p = new Person();
+                    p.name = name;
+                    p.email = email;
+                    p.phone =  phone;
+                    peopleList.add(p);
+                    adapter.notifyDataSetChanged();
+
+                    vName.setText("");
+                    vEmail.setText("");
+                    vPhone.setText("");
+                }
+
             }
         });
+
+    }
+
+    public boolean canProceed() {
+        if(peopleList.size()==0) {
+            Toast.makeText(context,R.string.sendpass_passes_error_no_persons,Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isEmailValid(String email) {
+        final String EMAIL_PATTERN =
+                "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                        + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+        Pattern pattern = Pattern.compile(EMAIL_PATTERN);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
+
+
+    private boolean verifyPerson(String name, String email, String phone) {
+        vName.setError(null);
+        vEmail.setError(null);
+        vPhone.setError(null);
+
+        boolean cancel = false;
+        View focusView = null;
+
+        if (TextUtils.isEmpty(name)) {
+            vName.setError(context.getString(R.string.sendpass_passes_empty_name));
+            focusView = vName;
+            cancel = true;
+        }
+
+        if (!isEmailValid(email)) {
+            vEmail.setError(context.getString(R.string.sendpass_passes_invalid_email));
+            focusView = vEmail;
+            cancel = true;
+        }
+
+        if (phone.length()<8) {
+            vPhone.setError(context.getString(R.string.sendpass_passes_invalid_phone));
+            focusView = vPhone;
+            cancel = true;
+        }
+
+        if (cancel) {
+            focusView.requestFocus();
+            return false;
+        }
+        return true;
 
     }
 

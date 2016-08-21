@@ -8,4 +8,12 @@
     <string name="toolbar_title_sendpass">Send Pass Info</string>
     <string name="toolbar_title_passes">Passes to Send</string>
     <string name="toolbar_title_confirmation">Confirmation</string>
+
+    <string name="sendpass_passes_empty_name">Name can\'t be empty</string>
+    <string name="sendpass_passes_invalid_email">Invalid Email</string>
+    <string name="sendpass_passes_invalid_phone">Invalid Phone</string>
+    <string name="sendpass_passes_error_no_persons">One pass at least needed!</string>
+
+    <string name="sendpass_info_empty_event_name">Empty event name</string>
+    <string name="sendpass_info_empty_event_desc">Empty event description</string>
 </resources>
