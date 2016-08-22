@@ -83,10 +83,6 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
         return roomsFiltered;
     }
 
-    public static DateTime getSelectedDate() {
-        return currentDate;
-    }
-
     /**
      * Method conforming to the interface JSONRequestListener.
      * Easily changing request body this way.

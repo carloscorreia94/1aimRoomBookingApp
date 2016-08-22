@@ -25,6 +25,9 @@ import com.oneaim.roombooking.main.send_pass.PassesUI;
 import com.oneaim.roombooking.main.send_pass.SendPassesListener;
 import com.oneaim.roombooking.models.Room;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -129,11 +132,18 @@ public class SendPassActivity extends AppCompatActivity implements SendPassesLis
         HashMap<String, Object> values = new HashMap<>();
         HashMap<String, Object> bookingValues = new HashMap<>();
 
-        long unixStamp = RoomsActivity.getSelectedDate().getMillis() / 1000;
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy");
+        DateTimeFormatter formatterHour = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm");
+
+        long unixStamp = formatter.parseDateTime(sendPassRoom.date).getMillis() / 1000;
 
         //Static values for timeline values, as it's not implemented.
-        long staticFromTime = RoomsActivity.getSelectedDate().plusHours(12).getMillis() / 1000;
-        long staticToTime = RoomsActivity.getSelectedDate().plusHours(13).getMillis() / 1000;
+        DateTime startDate = formatterHour.
+                parseDateTime(sendPassRoom.date + " " + sendPassRoom.
+                        availability[0].split(" - ")[0]);
+
+        long staticFromTime = startDate.getMillis() / 1000;
+        long staticToTime = startDate.plusMinutes(1).getMillis() / 1000;
 
         bookingValues.put("date",unixStamp);
         bookingValues.put("time_start",staticFromTime);
