@@ -103,11 +103,10 @@ public class SendPassActivity extends AppCompatActivity implements SendPassesLis
         roomDate = (TextView) findViewById(R.id.room_date);
         roomMainPicture = (ImageView) findViewById(R.id.room_main_picture);
 
-        Bundle args = getIntent().getExtras();
 
         roomName.setText(String.
                 format(getString(R.string.send_pass_room_desc),sendPassRoom.name));
-        roomDate.setText(args.getString("chosen_date"));
+        roomDate.setText(sendPassRoom.date);
 
         ImageLoader.getInstance()
                 .displayImage(APIEndpoints.API_URL + sendPassRoom.images[0],

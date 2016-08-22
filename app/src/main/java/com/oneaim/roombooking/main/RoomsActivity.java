@@ -24,6 +24,7 @@ import com.android.volley.Request;
 import com.oneaim.roombooking.R;
 import com.oneaim.roombooking.adapters.RoomListAdapter;
 import com.oneaim.roombooking.helper.APIEndpoints;
+import com.oneaim.roombooking.helper.FilterTools;
 import com.oneaim.roombooking.helper.JSONRequestListener;
 import com.oneaim.roombooking.helper.MainController;
 import com.oneaim.roombooking.helper.NetworkHelper;
@@ -49,7 +50,7 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
 
     private Map<String, String> mapRequest;
     private NetworkHelper networkHelper;
-    private List<Room> roomsFiltered, rooms = new ArrayList<>();
+    private List<Room>  rooms = new ArrayList<>();
     private RoomListAdapter adapter;
     private static DateTime currentDate;
     private DateTimeFormatter fmt;
@@ -73,7 +74,13 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
      */
 
     public List<Room> getRooms() {
-        return filtered ? roomsFiltered : rooms;
+        List<Room> roomsFiltered = new ArrayList<>();
+        for(Room room : rooms)
+        {
+            if(!room.hidden)
+               roomsFiltered.add(room);
+        }
+        return roomsFiltered;
     }
 
     public static DateTime getSelectedDate() {
@@ -98,16 +105,8 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
     public void successResponse(String response) {
         Log.i(TAG,response);
         try {
-            rooms = Room.getRooms(response);
-
-            /**
-             * This simulates the process of writing, with what's written (on the filter query),
-             * so the search filter can be set when changing dates with already filtered rooms
-             */
-            if(filterSearch.getText().length()>0)
-                new SearchTextWatcher().afterTextChanged(filterSearch.getEditableText());
-           // if(oneHourFilter.isChecked())
-             //   new OneHourFilterClickListener().onClick(oneHourFilter);
+            rooms = Room.getRooms(response,fmt.print(currentDate));
+            FilterTools.filterList(rooms,filterSearch,oneHourFilter);
 
             adapter.notifyDataSetChanged();
             vListView.setSelectionFromTop(0,0);
@@ -196,7 +195,6 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
     public void openSendPass(int roomNumber) {
         Room.setCurrentRoom(rooms.get(roomNumber));
         Intent intent = new Intent(RoomsActivity.this,SendPassActivity.class);
-        intent.putExtra("chosen_date",fmt.print(currentDate));
         startActivity(intent);
     }
 
@@ -243,7 +241,7 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
         filterSearch.addTextChangedListener(new SearchTextWatcher());
 
         oneHourFilter = (CheckedTextView) findViewById(R.id.filter_one_hour);
-       // oneHourFilter.setOnClickListener(new OneHourFilterClickListener());
+        oneHourFilter.setOnClickListener(new OneHourFilterClickListener());
     }
 
 
@@ -310,6 +308,7 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
 
     class SearchTextWatcher implements TextWatcher {
 
+
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -323,52 +322,29 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
         @Override
         public void afterTextChanged(Editable editable) {
             sendPassClickSection.setVisibility(View.GONE);
-            String searchQuery = editable.toString();
 
-            List<Room> rooms = getRooms();
-            filtered=filterSearch.getText().length()>0 || oneHourFilter.isChecked();
-
-            roomsFiltered = new ArrayList<>();
-            for(Room room : rooms)
-            {
-                if(room.name.contains(searchQuery))
-                    roomsFiltered.add(room);
-            }
-
+            FilterTools.filterList(rooms,filterSearch,oneHourFilter);
 
             adapter.notifyDataSetChanged();
         }
     }
 
 
-   /* class OneHourFilterClickListener implements View.OnClickListener {
+    class OneHourFilterClickListener implements View.OnClickListener {
 
         @Override
         public void onClick(View view) {
             CheckedTextView checkedView = (CheckedTextView) view;
             checkedView.setChecked(!checkedView.isChecked());
-            /**
-             * I keep a new reference of the rooms because we need to combine both filters, and
-             * iterate through the meaningful collection before changing the condition that can
-             * change the boolean that changes the way getRooms returns (hard to explain...)
-             */
-         /*   List<Room> rooms = getRooms();
-            filtered = filterSearch.getText().length()>0 || checkedView.isChecked();
+            sendPassClickSection.setVisibility(View.GONE);
 
-
-            roomsFiltered = new ArrayList<>();
-            for(Room room : checkedView.isChecked() ? rooms : RoomsActivity.this.rooms)
-            {
-                if(room.location.contains("Floor 1"))
-                    roomsFiltered.add(room);
-            }
-
-            if(!checkedView.isChecked() && filterSearch.getText().length()>0)
-                new SearchTextWatcher().afterTextChanged(filterSearch.getText());
-
+            FilterTools.filterList(rooms,filterSearch,oneHourFilter);
 
             adapter.notifyDataSetChanged();
 
         }
-    } */
+    }
+
+
+
 }

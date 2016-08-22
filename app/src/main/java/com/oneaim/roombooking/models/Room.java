@@ -14,13 +14,14 @@ import java.util.List;
  */
 public class Room {
 
-    public String name,location,size;
+    public String name,location,size,date;
     public int capacity;
     public String[] equipment,availability,images;
+    public boolean hidden = false;
     private static Room currentRoom = null;
 
     public Room(String name, String location, String size, int capacity,
-                String[] equipment, String[] availability, String[] images) {
+                String[] equipment, String[] availability, String[] images, String date) {
         this.name = name;
         this.location = location;
         this.size = size;
@@ -28,6 +29,7 @@ public class Room {
         this.equipment = equipment;
         this.availability = availability;
         this.images = images;
+        this.date = date;
 
     }
 
@@ -39,7 +41,7 @@ public class Room {
         currentRoom = room;
     }
 
-    public static List<Room> getRooms(String rooms) throws JSONException {
+    public static List<Room> getRooms(String rooms,String date) throws JSONException {
         List<Room> roomsList = new ArrayList<>();
         JSONArray roomsSerializable = new JSONArray(rooms);
         for(int i=0;i<roomsSerializable.length();i++) {
@@ -67,7 +69,7 @@ public class Room {
                                 ,roomSerializable.getString(ResponseValues.Room.LOCATION_KEY)
                                 ,roomSerializable.getString(ResponseValues.Room.SIZE_KEY)
                                 ,roomSerializable.getInt(ResponseValues.Room.CAPACITY_KEY)
-                                ,equipment,availability,images);
+                                ,equipment,availability,images,date);
             roomsList.add(room);
         }
         return roomsList;
