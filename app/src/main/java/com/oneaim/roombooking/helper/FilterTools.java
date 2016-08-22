@@ -1,11 +1,13 @@
 package com.oneaim.roombooking.helper;
 
+import android.util.Log;
 import android.widget.CheckedTextView;
 import android.widget.EditText;
 
 import com.oneaim.roombooking.models.Room;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -31,15 +33,25 @@ public final class FilterTools {
 
 
     public static boolean availableInOneHour(Room room) {
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy");
         DateTimeFormatter formatterHour = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm");
 
-        DateTime currentDate = formatter.parseDateTime(room.date);
+        /**
+         * I couldn't figure out how to get the right timezone from the phone yet. So, static
+         * solution, add 2 hours.
+         */
+        DateTime currentDate = formatterHour
+                .parseDateTime(room.date + " " + DateTimeFormat.forPattern("HH:mm")
+                        .print(new DateTime())).plusHours(2);
+
         for(String i : room.availability) {
-            String startTimeStr = i.split(" -")[0];
+            String startTimeStr = i.split(" - ")[0];
+            String endTimeStr = i.split(" - ")[1];
+
             DateTime startDate = formatterHour.parseDateTime(room.date + " " + startTimeStr);
-            Duration duration = new Duration(startDate, currentDate);
-            if(duration.getStandardMinutes()<60)
+            DateTime endDate = formatterHour.parseDateTime(room.date + " " + endTimeStr);
+            Duration duration = new Duration(currentDate,startDate);
+
+            if(duration.getStandardMinutes()<60 && currentDate.isBefore(endDate))
                 return true;
 
         }

@@ -322,6 +322,7 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
         @Override
         public void afterTextChanged(Editable editable) {
             sendPassClickSection.setVisibility(View.GONE);
+            collapseAllGroups(-1);
 
             FilterTools.filterList(rooms,filterSearch,oneHourFilter);
 
@@ -337,7 +338,7 @@ public class RoomsActivity extends AppCompatActivity implements JSONRequestListe
             CheckedTextView checkedView = (CheckedTextView) view;
             checkedView.setChecked(!checkedView.isChecked());
             sendPassClickSection.setVisibility(View.GONE);
-
+            collapseAllGroups(-1);
             FilterTools.filterList(rooms,filterSearch,oneHourFilter);
 
             adapter.notifyDataSetChanged();
